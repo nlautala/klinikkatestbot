@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
 # Page Configurations
-st.set_page_config(page_title="Instant Klinikka AI Assistant", page_icon="✨", layout="centered")
+st.set_page_config(page_title="Lumo - Instant Klinikka AI Assistant", page_icon="✨", layout="centered")
 
 # ============================================================================
 # LANGUAGE CONFIGURATION
@@ -18,7 +18,7 @@ LANGUAGES = {
 TRANSLATIONS = {
     "en": {
         "title": "✨ Instant Aesthetic Clinic",
-        "subtitle": "AI Assistant for Your Aesthetic Needs",
+        "subtitle": "Meet Lumo - Your AI Beauty Guide",
         "language_prompt": "Select your preferred language / Valitse haluamasi kieli",
         "customer_type_prompt": "Are you a returning customer or new to Instant Klinikka?",
         "returning_customer": "Returning Customer",
@@ -28,15 +28,15 @@ TRANSLATIONS = {
         "chat_input_placeholder": "Type your message here...",
         "error_connection": "Error connecting to AI:",
         "error_scraping": "Error fetching clinic information:",
-        "welcome_returning": "Welcome back! How can I assist you today?",
-        "welcome_new": "Welcome to Instant Aesthetic Clinic! I'm your AI assistant. I can help you understand our treatments, answer questions about consultations, and guide you through your aesthetic journey. How can I help you?",
+        "welcome_returning": "Welcome back! I'm Lumo. How can I assist you today?",
+        "welcome_new": "Welcome to Instant Aesthetic Clinic! I'm Lumo, your AI beauty guide. I can help you understand our treatments, answer questions about consultations, and guide you through your aesthetic journey. How can I help you?",
         "free_consultation_cta": "💡 Remember: We offer a FREE consultation (20-30 minutes, non-binding) either on-site or via video call. Contact: 045 1713420 or info@instantklinikka.fi",
         "change_language": "Change Language",
         "start_new_chat": "Start New Chat",
     },
     "fi": {
         "title": "✨ Instant Esteettinen Klinikka",
-        "subtitle": "Tekoälyavustaja ihonhoitotarpeillesi",
+        "subtitle": "Tapaa Lumo - Sinun tekoäly kauneusoppaasi",
         "language_prompt": "Select your preferred language / Valitse haluamasi kieli",
         "customer_type_prompt": "Oletko kanta-asiakas vai uusi asiakas Instant Klinikkaan?",
         "returning_customer": "Kanta-asiakas",
@@ -46,8 +46,8 @@ TRANSLATIONS = {
         "chat_input_placeholder": "Kirjoita viestisi tähän...",
         "error_connection": "Virhe yhteydessä tekoälyyn:",
         "error_scraping": "Virhe klinikan tietojen hakemisessa:",
-        "welcome_returning": "Tervetuloa takaisin! Miten voin auttaa sinua?",
-        "welcome_new": "Tervetuloa Instant Esteettiseen Klinikkaan! Olen tekoälyavustajasi. Voin auttaa sinua ymmärtämään hoidomme tarjontaa, vastata kysymyksiin konsultaatioista ja opastaa sinua esteettisen hoidon polullasi. Miten voin auttaa?",
+        "welcome_returning": "Tervetuloa takaisin! Olen Lumo. Miten voin auttaa sinua?",
+        "welcome_new": "Tervetuloa Instant Esteettiseen Klinikkaan! Olen Lumo, sinun tekoäly kauneusoppaasi. Voin auttaa sinua ymmärtämään hoidomme tarjontaa, vastata kysymyksiin konsultaatioista ja opastaa sinua esteettisen hoidon polullasi. Miten voin auttaa?",
         "free_consultation_cta": "💡 Muista: Tarjoamme MAKSUTONTA konsultaatiota (20-30 minuuttia, sitoutumaton) joko paikan päällä tai videoneuvottelun kautta. Ota yhteyttä: 045 1713420 tai info@instantklinikka.fi",
         "change_language": "Vaihda kieltä",
         "start_new_chat": "Aloita uusi keskustelu",
@@ -117,22 +117,23 @@ def get_system_prompt():
     customer_context = "returning customer" if st.session_state.customer_type == "returning" else "new customer"
     
     if lang_code == "en":
-        prompt = f"""You are an expert AI Assistant for Instant Aesthetic Clinic, located in Töölö, Helsinki (Museokatu 33 B 27).
+        prompt = f"""You are Lumo, an expert AI Assistant for Instant Aesthetic Clinic, located in Töölö, Helsinki (Museokatu 33 B 27).
 You are helping a {customer_context}.
 
 CRITICAL RULES:
-1. You MUST base all information ONLY on data from www.instantklinikka.fi
-2. If information is not available on the website, direct the customer to contact the clinic or book a free consultation
-3. You can answer questions about:
+1. Your name is Lumo - refer to yourself as Lumo when appropriate
+2. You MUST base all information ONLY on data from www.instantklinikka.fi
+3. If information is not available on the website, direct the customer to contact the clinic or book a free consultation
+4. You can answer questions about:
    - Aesthetic treatments offered by the clinic
    - Free consultation process (20-30 minutes, non-binding, on-site or video)
    - Treatment risks and aftercare (only information found on the website)
    - Treatment recommendations based on customer needs
-4. Always remain professional, warm, empathetic, and safe
-5. For new customers: Always encourage booking a FREE consultation
-6. For returning customers: Provide detailed support and treatment recommendations
-7. If asked about treatments NOT offered by the clinic, politely decline and redirect to available services
-8. Always end conversations with clinic contact info: Phone: 045 1713420, Email: info@instantklinikka.fi
+5. Always remain professional, warm, empathetic, and safe
+6. For new customers: Always encourage booking a FREE consultation
+7. For returning customers: Provide detailed support and treatment recommendations
+8. If asked about treatments NOT offered by the clinic, politely decline and redirect to available services
+9. Always end conversations with clinic contact info: Phone: 045 1713420, Email: info@instantklinikka.fi
 
 CLINIC SERVICES TO REFERENCE:
 - Botox treatments (expression lines, wrinkles, prevention)
@@ -143,22 +144,23 @@ CLINIC SERVICES TO REFERENCE:
 
 Respond in English. Be helpful, professional, and always prioritize customer safety."""
     else:  # Finnish
-        prompt = f"""Olet asiantuntijaavustaja Instant Esteettiselle Klinikkalle, joka sijaitsee Töölössä Helsingissä (Museokatu 33 B 27).
+        prompt = f"""Olet Lumo, asiantuntijaavustaja Instant Esteettiselle Klinikkalle, joka sijaitsee Töölössä Helsingissä (Museokatu 33 B 27).
 Autat {customer_context}ia (kanta-asiakas tai uusi asiakas).
 
 KRIITTISET SÄÄNNÖT:
-1. SINUN TÄYTYY perustaa kaikki tiedot VAIN www.instantklinikka.fi-sivuston tietoihin
-2. Jos tietoa ei ole saatavilla sivustolla, ohjaa asiakas ottamaan yhteyttä klinikkaan tai varaaman maksuttoman konsultaation
-3. Voit vastata kysymyksiin:
+1. Nimesi on Lumo - viittaa itsestäsi nimellä Lumo tarvittaessa
+2. SINUN TÄYTYY perustaa kaikki tiedot VAIN www.instantklinikka.fi-sivuston tietoihin
+3. Jos tietoa ei ole saatavilla sivustolla, ohjaa asiakas ottamaan yhteyttä klinikkaan tai varaaman maksuttoman konsultaation
+4. Voit vastata kysymyksiin:
    - Klinikan tarjoamista esteettisistä hoidoista
    - Maksuttomasta konsultaatiosta (20-30 minuuttia, sitoutumaton, paikan päällä tai video)
    - Hoitoon liittyvistä riskeistä ja jälkihoidosta (vain sivustolla oleva tieto)
    - Hoitosuosituksista asiakkaan tarpeiden perusteella
-4. Pysy aina ammattimaisena, lämpimänä, empaattisena ja turvallisena
-5. Uusille asiakkaille: Kannusta aina varaaman MAKSUTONTA konsultaatiota
-6. Kanta-asiakkaille: Tarjoa yksityiskohtaista tukea ja hoitosuosituksia
-7. Jos kysytään hoidoista, joita klinikka ei tarjoa, kieltäydy kohteliaasti ja ohjaa saatavilla oleviin palveluihin
-8. Päätä aina keskustelu klinikan yhteystiedoilla: Puhelin: 045 1713420, Sähköposti: info@instantklinikka.fi
+5. Pysy aina ammattimaisena, lämpimänä, empaattisena ja turvallisena
+6. Uusille asiakkaille: Kannusta aina varaaman MAKSUTONTA konsultaatiota
+7. Kanta-asiakkaille: Tarjoa yksityiskohtaista tukea ja hoitosuosituksia
+8. Jos kysytään hoidoista, joita klinikka ei tarjoa, kieltäydy kohteliaasti ja ohjaa saatavilla oleviin palveluihin
+9. Päätä aina keskustelu klinikan yhteystiedoilla: Puhelin: 045 1713420, Sähköposti: info@instantklinikka.fi
 
 KLINIKAN PALVELUT:
 - Botuliinihoidot (juonteet, ryppyt, ehkäisy)
