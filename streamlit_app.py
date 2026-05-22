@@ -23,10 +23,6 @@ TRANSLATIONS = {
         "customer_type_prompt": "Are you a returning customer or new to Instant Klinikka?",
         "returning_customer": "Returning Customer",
         "new_customer": "New Customer",
-        "treatment_type_prompt": "What type of treatment are you interested in?",
-        "invasive_treatments": "Invasive Treatments (Injectable)",
-        "non_invasive_treatments": "Non-Invasive Treatments",
-        "both_types": "Show All Treatments",
         "api_key_prompt": "Enter your OpenAI API Key:",
         "api_key_info": "Please add your OpenAI API key to continue.",
         "chat_input_placeholder": "Type your message here...",
@@ -45,10 +41,6 @@ TRANSLATIONS = {
         "customer_type_prompt": "Oletko kanta-asiakas vai uusi asiakas Instant Klinikkaan?",
         "returning_customer": "Kanta-asiakas",
         "new_customer": "Uusi asiakas",
-        "treatment_type_prompt": "Minkä tyyppisiä hoitoja olet kiinnostunut?",
-        "invasive_treatments": "Invasiiviset hoidot (pistoshoidot)",
-        "non_invasive_treatments": "Ei-invasiiviset hoidot",
-        "both_types": "Näytä kaikki hoidot",
         "api_key_prompt": "Syötä OpenAI API-avain (API Key):",
         "api_key_info": "Ole hyvä ja lisää OpenAI API-avaimesi jatkaaksesi.",
         "chat_input_placeholder": "Kirjoita viestisi tähän...",
@@ -69,8 +61,6 @@ if "language" not in st.session_state:
     st.session_state.language = None
 if "customer_type" not in st.session_state:
     st.session_state.customer_type = None
-if "treatment_type" not in st.session_state:
-    st.session_state.treatment_type = None
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "clinic_info" not in st.session_state:
@@ -122,25 +112,13 @@ def fetch_clinic_info():
         }
 
 def get_system_prompt():
-    """Generate system prompt based on language, customer type, and treatment preference"""
+    """Generate system prompt based on language and customer type"""
     lang_code = LANGUAGES[st.session_state.language]
     customer_context = "returning customer" if st.session_state.customer_type == "returning" else "new customer"
-    treatment_context = ""
-    
-    if st.session_state.treatment_type == "invasive":
-        if lang_code == "en":
-            treatment_context = "\nThe customer is interested in INVASIVE/INJECTABLE TREATMENTS only. Focus recommendations on treatments involving injections (Botox, Fillers, Mesotherapy, Biorevitalization, Rejuran)."
-        else:
-            treatment_context = "\nAsiakas on kiinnostunut INVASIIVISISTA/PISTOSHOIDOISTA. Keskity suosituksiin, jotka sisältävät pistoshoidot (Botuliini, täyteaineet, mesoterapia, biorevitalisaatio, Rejuran)."
-    elif st.session_state.treatment_type == "non_invasive":
-        if lang_code == "en":
-            treatment_context = "\nThe customer is interested in NON-INVASIVE TREATMENTS only. Focus recommendations on non-needle treatments (HIFU/Ultraformer, professional skincare treatments)."
-        else:
-            treatment_context = "\nAsiakas on kiinnostunut EI-INVASIIVISISTA HOIDOISTA. Keskity suosituksiin, jotka eivät sisällä neuloja (HIFU/Ultraformer, ammattimaiset ihohoitopalvelut)."
     
     if lang_code == "en":
         prompt = f"""You are Lumo, an expert AI Assistant for Instant Aesthetic Clinic, located in Töölö, Helsinki (Museokatu 33 B 27).
-You are helping a {customer_context}.{treatment_context}
+You are helping a {customer_context}.
 
 CRITICAL RULES:
 1. Your name is Lumo - refer to yourself as Lumo when appropriate
@@ -156,6 +134,19 @@ CRITICAL RULES:
 7. For returning customers: Provide detailed support and treatment recommendations
 8. If asked about treatments NOT offered by the clinic, politely decline and redirect to available services
 9. Always end conversations with clinic contact info: Phone: 045 1713420, Email: info@instantklinikka.fi
+
+IMPORTANT - TREATMENT PRESENTATION:
+When offering treatment recommendations for a skin concern:
+- If MULTIPLE treatment options are available, CLEARLY organize them into two distinct categories:
+  
+  **INVASIVE (INJECTABLE) OPTIONS:**
+  [List injectable treatments relevant to the concern]
+  
+  **NON-INVASIVE OPTIONS:**
+  [List non-needle treatments relevant to the concern]
+
+- Use this format consistently to help customers understand their choices
+- If only one type is available for a specific concern, present that option without categorization
 
 CLINIC SERVICES - ALL TREATMENTS AVAILABLE:
 
@@ -222,7 +213,7 @@ A: Invasive/injectable treatments use needles to inject substances like Botox, f
 Respond in English. Be helpful, professional, and always prioritize customer safety."""
     else:  # Finnish
         prompt = f"""Olet Lumo, asiantuntijaavustaja Instant Esteettiselle Klinikkalle, joka sijaitsee Töölössä Helsingissä (Museokatu 33 B 27).
-Autat {customer_context}ia (kanta-asiakas tai uusi asiakas).{treatment_context}
+Autat {customer_context}ia (kanta-asiakas tai uusi asiakas).
 
 KRIITTISET SÄÄNNÖT:
 1. Nimesi on Lumo - viittaa itsestäsi nimellä Lumo tarvittaessa
@@ -238,6 +229,19 @@ KRIITTISET SÄÄNNÖT:
 7. Kanta-asiakkaille: Tarjoa yksityiskohtaista tukea ja hoitosuosituksia
 8. Jos kysytään hoidoista, joita klinikka ei tarjoa, kieltäydy kohteliaasti ja ohjaa saatavilla oleviin palveluihin
 9. Päätä aina keskustelu klinikan yhteystiedoilla: Puhelin: 045 1713420, Sähköposti: info@instantklinikka.fi
+
+TÄRKEÄ - HOITOJEN ESITTÄMINEN:
+Kun tarjoat hoitosuosituksia ihonhoitoon liittyvää ongelmaa varten:
+- Jos USEITA hoitovaihtoehtoja on saatavilla, JÄRJESTÄ ne selvästi kahteen erilliseen kategoriaan:
+  
+  **INVASIIVISET (PISTOSHOIDOT) VAIHTOEHDOT:**
+  [Luettele hoitoon liittyvät pistoshoidot]
+  
+  **EI-INVASIIVISET VAIHTOEHDOT:**
+  [Luettele ei-neulaan perustuvat hoitovaihtoehdot]
+
+- Käytä tätä muotoa johdonmukaisesti auttaaksesi asiakkaita ymmärtämään valintataan
+- Jos vain yksi tyyppi on saatavilla tietyn ongelman ratkaisuun, esitä se ilman kategorisointia
 
 KLINIKAN PALVELUT - KAIKKI SAATAVILLA OLEVAT HOIDOT:
 
@@ -332,7 +336,6 @@ with col2:
     if st.button(get_text("change_language"), key="change_lang_btn"):
         st.session_state.language = None
         st.session_state.customer_type = None
-        st.session_state.treatment_type = None
         st.session_state.messages = []
         st.rerun()
 
@@ -349,26 +352,6 @@ if not st.session_state.customer_type:
     with col2:
         if st.button(get_text("returning_customer"), use_container_width=True, key="returning_cust"):
             st.session_state.customer_type = "returning"
-            st.rerun()
-    st.stop()
-
-st.write("---")
-
-# Treatment Type Selection
-if not st.session_state.treatment_type:
-    st.write(get_text("treatment_type_prompt"))
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        if st.button(get_text("invasive_treatments"), use_container_width=True, key="invasive_treat"):
-            st.session_state.treatment_type = "invasive"
-            st.rerun()
-    with col2:
-        if st.button(get_text("non_invasive_treatments"), use_container_width=True, key="non_invasive_treat"):
-            st.session_state.treatment_type = "non_invasive"
-            st.rerun()
-    with col3:
-        if st.button(get_text("both_types"), use_container_width=True, key="both_treat"):
-            st.session_state.treatment_type = "all"
             st.rerun()
     st.stop()
 
