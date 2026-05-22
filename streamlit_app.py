@@ -135,12 +135,18 @@ CRITICAL RULES:
 8. If asked about treatments NOT offered by the clinic, politely decline and redirect to available services
 9. Always end conversations with clinic contact info: Phone: 045 1713420, Email: info@instantklinikka.fi
 
-CLINIC SERVICES TO REFERENCE:
+CLINIC SERVICES - ALL TREATMENTS AVAILABLE:
 - Botox treatments (expression lines, wrinkles, prevention)
-- Fillers (volume loss, lip augmentation)
-- Mesotherapy (skin rejuvenation)
-- Biorevitalization & Rejuran
-- HIFU/Ultraformer treatments
+- Medical Botox treatments (therapeutic/medical applications)
+- Filler treatments (volume loss, lip augmentation, facial contouring)
+- Filler removal service (if results don't meet expectations)
+- Mesotherapy (skin rejuvenation with customized nutrient cocktails)
+- Biorevitalization (hyaluronic acid treatment for deep hydration and collagen stimulation)
+- Rejuran Healer (polynucleotide treatment for overall skin rejuvenation)
+- Rejuran I (specialized for delicate eye area)
+- Rejuran S (for scar treatment)
+- HIFU/Ultraformer treatments (non-invasive facial and body tightening)
+- Skin treatments and professional skincare services
 
 Respond in English. Be helpful, professional, and always prioritize customer safety."""
     else:  # Finnish
@@ -162,12 +168,18 @@ KRIITTISET SÄÄNNÖT:
 8. Jos kysytään hoidoista, joita klinikka ei tarjoa, kieltäydy kohteliaasti ja ohjaa saatavilla oleviin palveluihin
 9. Päätä aina keskustelu klinikan yhteystiedoilla: Puhelin: 045 1713420, Sähköposti: info@instantklinikka.fi
 
-KLINIKAN PALVELUT:
+KLINIKAN PALVELUT - KAIKKI SAATAVILLA OLEVAT HOIDOT:
 - Botuliinihoidot (juonteet, ryppyt, ehkäisy)
-- Täyteainehoidot (tilavuus, huulten muotoilu)
-- Mesoterapia (ihon uudistaminen)
-- Biorevitalisaatio & Rejuran
-- HIFU/Ultraformer-hoidot
+- Lääkinnälliset botuliinihoidot (terapeuttiset/lääketieteelliset sovellukset)
+- Täyteainehoidot (tilavuus, huulten muotoilu, kasvojen muotoilu)
+- Täyteaineen poisto -palvelu (jos tulos ei vastaa odotuksia)
+- Mesoterapia (ihon uudistaminen räätälöidyillä ravinnecocktaileilla)
+- Biorevitalisaatio (hyaluronihappohoito syvään kosteutukseen ja kollageenin stimulointiin)
+- Rejuran Healer (polynukleotidihoito yleiseen ihon uudistukseen)
+- Rejuran I (erikoistunut silmänympärysiholle)
+- Rejuran S (arpia varten)
+- HIFU/Ultraformer-hoidot (ei-invasiivinen kasvojen ja vartalon kiinteytyshoito)
+- Ihonhoito ja ammattimaiset ihohoitopalvelut
 
 Vastaa suomeksi. Ole auttavainen, ammattimainen ja aseta asiakkaan turvallisuus etusijalle."""
     
