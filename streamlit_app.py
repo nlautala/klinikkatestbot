@@ -23,6 +23,10 @@ TRANSLATIONS = {
         "customer_type_prompt": "Are you a returning customer or new to Instant Klinikka?",
         "returning_customer": "Returning Customer",
         "new_customer": "New Customer",
+        "treatment_type_prompt": "What type of treatment are you interested in?",
+        "invasive_treatments": "Invasive Treatments (Injectable)",
+        "non_invasive_treatments": "Non-Invasive Treatments",
+        "both_types": "Show All Treatments",
         "api_key_prompt": "Enter your OpenAI API Key:",
         "api_key_info": "Please add your OpenAI API key to continue.",
         "chat_input_placeholder": "Type your message here...",
@@ -41,6 +45,10 @@ TRANSLATIONS = {
         "customer_type_prompt": "Oletko kanta-asiakas vai uusi asiakas Instant Klinikkaan?",
         "returning_customer": "Kanta-asiakas",
         "new_customer": "Uusi asiakas",
+        "treatment_type_prompt": "Minkä tyyppisiä hoitoja olet kiinnostunut?",
+        "invasive_treatments": "Invasiiviset hoidot (pistoshoidot)",
+        "non_invasive_treatments": "Ei-invasiiviset hoidot",
+        "both_types": "Näytä kaikki hoidot",
         "api_key_prompt": "Syötä OpenAI API-avain (API Key):",
         "api_key_info": "Ole hyvä ja lisää OpenAI API-avaimesi jatkaaksesi.",
         "chat_input_placeholder": "Kirjoita viestisi tähän...",
@@ -61,6 +69,8 @@ if "language" not in st.session_state:
     st.session_state.language = None
 if "customer_type" not in st.session_state:
     st.session_state.customer_type = None
+if "treatment_type" not in st.session_state:
+    st.session_state.treatment_type = None
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "clinic_info" not in st.session_state:
@@ -112,13 +122,25 @@ def fetch_clinic_info():
         }
 
 def get_system_prompt():
-    """Generate system prompt based on language and customer type"""
+    """Generate system prompt based on language, customer type, and treatment preference"""
     lang_code = LANGUAGES[st.session_state.language]
     customer_context = "returning customer" if st.session_state.customer_type == "returning" else "new customer"
+    treatment_context = ""
+    
+    if st.session_state.treatment_type == "invasive":
+        if lang_code == "en":
+            treatment_context = "\nThe customer is interested in INVASIVE/INJECTABLE TREATMENTS only. Focus recommendations on treatments involving injections (Botox, Fillers, Mesotherapy, Biorevitalization, Rejuran)."
+        else:
+            treatment_context = "\nAsiakas on kiinnostunut INVASIIVISISTA/PISTOSHOIDOISTA. Keskity suosituksiin, jotka sisältävät pistoshoidot (Botuliini, täyteaineet, mesoterapia, biorevitalisaatio, Rejuran)."
+    elif st.session_state.treatment_type == "non_invasive":
+        if lang_code == "en":
+            treatment_context = "\nThe customer is interested in NON-INVASIVE TREATMENTS only. Focus recommendations on non-needle treatments (HIFU/Ultraformer, professional skincare treatments)."
+        else:
+            treatment_context = "\nAsiakas on kiinnostunut EI-INVASIIVISISTA HOIDOISTA. Keskity suosituksiin, jotka eivät sisällä neuloja (HIFU/Ultraformer, ammattimaiset ihohoitopalvelut)."
     
     if lang_code == "en":
         prompt = f"""You are Lumo, an expert AI Assistant for Instant Aesthetic Clinic, located in Töölö, Helsinki (Museokatu 33 B 27).
-You are helping a {customer_context}.
+You are helping a {customer_context}.{treatment_context}
 
 CRITICAL RULES:
 1. Your name is Lumo - refer to yourself as Lumo when appropriate
@@ -136,6 +158,8 @@ CRITICAL RULES:
 9. Always end conversations with clinic contact info: Phone: 045 1713420, Email: info@instantklinikka.fi
 
 CLINIC SERVICES - ALL TREATMENTS AVAILABLE:
+
+INVASIVE (INJECTABLE) TREATMENTS:
 - Botox treatments (expression lines, wrinkles, prevention)
 - Medical Botox treatments (therapeutic/medical applications)
 - Filler treatments (volume loss, lip augmentation, facial contouring)
@@ -145,6 +169,8 @@ CLINIC SERVICES - ALL TREATMENTS AVAILABLE:
 - Rejuran Healer (polynucleotide treatment for overall skin rejuvenation)
 - Rejuran I (specialized for delicate eye area)
 - Rejuran S (for scar treatment)
+
+NON-INVASIVE TREATMENTS:
 - HIFU/Ultraformer treatments (non-invasive facial and body tightening)
 - Skin treatments and professional skincare services
 
@@ -189,10 +215,14 @@ A: Instant Klinikka accepts: credit/debit card, cash, invoice, and Resurs Bank h
 Q: What is the free consultation?
 A: Our free consultation is 20-30 minutes, non-binding, available on-site or via video call. It allows you to discuss your goals with a professional who can recommend suitable treatments.
 
+**INVASIVE VS NON-INVASIVE:**
+Q: What's the difference between invasive and non-invasive treatments?
+A: Invasive/injectable treatments use needles to inject substances like Botox, fillers, or skin rejuvenation solutions. Non-invasive treatments use technology like HIFU/Ultraformer (sound waves) or professional skincare without needles. Both are effective; choice depends on personal preference and goals.
+
 Respond in English. Be helpful, professional, and always prioritize customer safety."""
     else:  # Finnish
         prompt = f"""Olet Lumo, asiantuntijaavustaja Instant Esteettiselle Klinikkalle, joka sijaitsee Töölössä Helsingissä (Museokatu 33 B 27).
-Autat {customer_context}ia (kanta-asiakas tai uusi asiakas).
+Autat {customer_context}ia (kanta-asiakas tai uusi asiakas).{treatment_context}
 
 KRIITTISET SÄÄNNÖT:
 1. Nimesi on Lumo - viittaa itsestäsi nimellä Lumo tarvittaessa
@@ -210,6 +240,8 @@ KRIITTISET SÄÄNNÖT:
 9. Päätä aina keskustelu klinikan yhteystiedoilla: Puhelin: 045 1713420, Sähköposti: info@instantklinikka.fi
 
 KLINIKAN PALVELUT - KAIKKI SAATAVILLA OLEVAT HOIDOT:
+
+INVASIIVISET (PISTOSHOIDOT):
 - Botuliinihoidot (juonteet, ryppyt, ehkäisy)
 - Lääkinnälliset botuliinihoidot (terapeuttiset/lääketieteelliset sovellukset)
 - Täyteainehoidot (tilavuus, huulten muotoilu, kasvojen muotoilu)
@@ -219,6 +251,8 @@ KLINIKAN PALVELUT - KAIKKI SAATAVILLA OLEVAT HOIDOT:
 - Rejuran Healer (polynukleotidihoito yleiseen ihon uudistukseen)
 - Rejuran I (erikoistunut silmänympärysiholle)
 - Rejuran S (arpia varten)
+
+EI-INVASIIVISET HOIDOT:
 - HIFU/Ultraformer-hoidot (ei-invasiivinen kasvojen ja vartalon kiinteytyshoito)
 - Ihonhoito ja ammattimaiset ihohoitopalvelut
 
@@ -263,6 +297,10 @@ V: Instant Klinikka hyväksyy: luottokortin/pankkikortin, käteisen, laskun ja R
 K: Mikä on maksuttomuus konsultaatio?
 V: Maksuttomuus konsultaatio on 20-30 minuuttia, sitoutumaton, saatavilla paikan päällä tai videossa. Sen avulla voit keskustella tavoitteistasi ammattilaisen kanssa, joka voi suositella sopivimpia hoitoja.
 
+**INVASIIVISET VS EI-INVASIIVISET:**
+K: Mikä on ero invasiivisten ja ei-invasiivisten hoitojen välillä?
+V: Invasiiviset pistoshoidot käyttävät neulaa antamaan aineiden, kuten Botuliinin, täyteaineiden tai ihon uudistusliuosten. Ei-invasiiviset hoidot käyttävät teknologiaa, kuten HIFU/Ultraformer (ääniaalto) tai ammattimaisia ihohoitoja ilman neuloja. Molemmat ovat tehokkaita; valinta riippuu henkilökohtaisista mieltymyksistä ja tavoitteista.
+
 Vastaa suomeksi. Ole auttavainen, ammattimainen ja aseta asiakkaan turvallisuus etusijalle."""
     
     return prompt
@@ -294,6 +332,7 @@ with col2:
     if st.button(get_text("change_language"), key="change_lang_btn"):
         st.session_state.language = None
         st.session_state.customer_type = None
+        st.session_state.treatment_type = None
         st.session_state.messages = []
         st.rerun()
 
@@ -310,6 +349,26 @@ if not st.session_state.customer_type:
     with col2:
         if st.button(get_text("returning_customer"), use_container_width=True, key="returning_cust"):
             st.session_state.customer_type = "returning"
+            st.rerun()
+    st.stop()
+
+st.write("---")
+
+# Treatment Type Selection
+if not st.session_state.treatment_type:
+    st.write(get_text("treatment_type_prompt"))
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button(get_text("invasive_treatments"), use_container_width=True, key="invasive_treat"):
+            st.session_state.treatment_type = "invasive"
+            st.rerun()
+    with col2:
+        if st.button(get_text("non_invasive_treatments"), use_container_width=True, key="non_invasive_treat"):
+            st.session_state.treatment_type = "non_invasive"
+            st.rerun()
+    with col3:
+        if st.button(get_text("both_types"), use_container_width=True, key="both_treat"):
+            st.session_state.treatment_type = "all"
             st.rerun()
     st.stop()
 
